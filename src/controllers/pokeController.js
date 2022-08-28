@@ -1,5 +1,5 @@
 const { Pokemon, Type } = require("../db");
-const { fetchingData } = require("./service");
+const { fetchingData, byId } = require("./service");
 
 const pokeApi = async () => {
   try {
@@ -8,7 +8,6 @@ const pokeApi = async () => {
     console.log(err);
   }
 };
-pokeApi();
 const pokeDB = async () => {
   const service = await Pokemon.findAll({ include: Type });
   return service;
@@ -17,7 +16,7 @@ const pokeDB = async () => {
 const allInfo = async () => {
   const api = await pokeApi();
   const db = await pokeDB();
-  const all = api.concat(db);
+  const all = api.sort(byId).concat(db);
   return all;
 };
 module.exports = { allInfo };

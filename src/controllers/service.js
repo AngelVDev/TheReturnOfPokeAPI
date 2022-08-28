@@ -2,6 +2,15 @@ const axios = require("axios");
 function capitalize(name) {
   return name.charAt(0).toUpperCase() + name.slice(1);
 }
+function byId(a, b) {
+  if (a.id > b.id) {
+    return 1;
+  }
+  if (b.id > a.id) {
+    return -1;
+  }
+  return 0;
+}
 const fetchingData = async () => {
   const pokeData = [];
   const pokeEndpoint = await axios.get(`https://pokeapi.co/api/v2/pokemon`);
@@ -39,4 +48,4 @@ const fetchingData = async () => {
   return await allPk;
 };
 
-module.exports = { fetchingData };
+module.exports = { fetchingData, byId };
