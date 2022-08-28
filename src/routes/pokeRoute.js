@@ -27,7 +27,8 @@ router.get("/pokemons/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const info = await allInfo();
-    if (id > 40) {
+    const regex = new RegExp("[a-z]");
+    if (regex.test(id) === true) {
       const pokeInDB = await Pokemon.findOne({ where: { id }, include: Type });
       !pokeInDB
         ? res.status(404).send("Not valid ID")
@@ -44,19 +45,20 @@ router.get("/pokemons/:id", async (req, res) => {
 router.post("/pokemons", async (req, res) => {
   const { name, HP, attack, defense, speed, height, weight, types } = req.body;
   try {
-    const pokeNew = await Pokemon.create({
-      name,
-      HP,
-      attack,
-      height,
-      weight,
-      defense,
-      speed,
-    });
-    const typeDb = await Type.findAll({ where: { name: types } });
-    await pokeNew.addType(typeDb);
-    console.log(typeDb);
-    res.status(201).json(pokeNew);
+    if (name && HP && defense && speed && height && weight && types) {
+      const pokeNew = await Pokemon.create({
+        name,
+        HP,
+        attack,
+        height,
+        weight,
+        defense,
+        speed,
+      });
+      const typeDb = await Type.findAll({ where: { name: types } });
+      await pokeNew.addType(typeDb);
+      return res.status(201).json(pokeNew);
+    }
   } catch (error) {
     res.status(500).send(error);
     console.log(error);
