@@ -18,11 +18,15 @@
 //                       `=---='
 //     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 const server = require("./src/app.js");
+const { allInfo } = require("./src/controllers/pokeController.js");
+const { typeApi } = require("./src/controllers/pokeTypeController.js");
 const { conn } = require("./src/db.js");
 
 // Syncing all the models at once.
 conn.sync({ force: true }).then(() => {
   server.listen(3001, () => {
+    allInfo();
+    typeApi();
     console.log("%s leveling at 3001"); // eslint-disable-line no-console
   });
 });
