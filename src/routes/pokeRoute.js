@@ -29,7 +29,11 @@ router.get("/pokemons/:id", async (req, res) => {
     const info = await allInfo();
     const regex = new RegExp("[a-z]");
     if (regex.test(id) === true) {
-      const pokeInDB = await Pokemon.findOne({ where: { id }, include: Type });
+      const pokeInDB = await Pokemon.findOne({
+        where: { id },
+        include: Type,
+        through: { attributes: [] },
+      });
       !pokeInDB
         ? res.status(404).send("Not valid ID")
         : res.status(200).json(pokeInDB);
@@ -64,7 +68,7 @@ router.post("/pokemons", async (req, res) => {
     console.log(error);
   }
 });
-router.get("/:id/delete", async (req, res) => {
+router.get("/pokemons/:id/delete", async (req, res) => {
   try {
     await Pokemon.destroy({
       where: { id: req.params.id },
