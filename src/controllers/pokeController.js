@@ -9,7 +9,15 @@ const pokeApi = async () => {
   }
 };
 const pokeDB = async () => {
-  const service = await Pokemon.findAll({ include: Type });
+  const service = await Pokemon.findAll({
+    include: {
+      model: Type,
+      attributes: ["name"],
+      through: {
+        attributes: [],
+      },
+    },
+  });
   return service;
 };
 

@@ -30,10 +30,11 @@ const fetchingData = async () => {
       return {
         id: poke.data.id,
         name: capitalize(poke.data.name),
-        types: [
-          poke.data.types[0].type.name,
-          poke.data.types[1] ? poke.data.types[1].type.name : null,
-        ].filter(Boolean),
+        types: poke.data.types
+          .map((t) => {
+            return { name: t.type.name };
+          })
+          .filter(Boolean),
         image: poke.data.sprites.other["official-artwork"].front_default,
         HP: poke.data.stats[0].base_stat,
         attack: poke.data.stats[1].base_stat,
