@@ -7,16 +7,13 @@ router.get("/pokemons", async (req, res) => {
   try {
     const { name } = req.query;
     const info = await allInfo();
-    console.log("This is name", name);
     if (name) {
       const pokeName = info.filter((el) =>
         el.name.toLowerCase().includes(name.toLowerCase())
       );
-      pokeName
-        ? res.status(200).json(pokeName)
-        : res.status(404).json("NOT FOUND");
+      return res.status(200).json(pokeName);
     } else {
-      res.status(200).json(info);
+      return res.status(200).json(info);
     }
   } catch (error) {
     res.status(500).send(error);
@@ -47,7 +44,8 @@ router.get("/pokemons/:id", async (req, res) => {
   }
 });
 router.post("/pokemons", async (req, res) => {
-  const { name, HP, attack, defense, speed, height, weight, types } = req.body;
+  const { name, HP, attack, defense, speed, height, weight, types, image } =
+    req.body;
   try {
     if (name && HP && defense && speed && height && weight && types) {
       const pokeNew = await Pokemon.create({
@@ -57,6 +55,7 @@ router.post("/pokemons", async (req, res) => {
         height,
         weight,
         defense,
+        image,
         speed,
       });
       const typeDb = await Type.findAll({ where: { name: types } });

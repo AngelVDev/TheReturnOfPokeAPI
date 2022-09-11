@@ -40,6 +40,10 @@ module.exports = (sequelize) => {
         type: DataTypes.INTEGER,
         allowNull: false,
       },
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
       createdInDb: {
         type: DataTypes.BOOLEAN,
         defaultValue: true,
