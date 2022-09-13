@@ -78,4 +78,24 @@ router.get("/pokemons/:id/delete", async (req, res) => {
     console.log(error);
   }
 });
+router.put("/pokemons/:id", async (req, res) => {
+  try {
+    const { name, HP, attack, defense, speed, height, weight, types, image } =
+      req.body;
+    const pokeUpdate = await Pokemon.findOne({
+      where: { id: req.params.id },
+    });
+
+    await pokeUpdate.update({
+      name: req.body.name,
+    });
+    await pokeUpdate.save();
+    await pokeUpdate.reload();
+    return res.status(200).json(pokeUpdate);
+  } catch (error) {
+    res.status(500).send(error);
+    console.log(error);
+  }
+});
+
 module.exports = router;
