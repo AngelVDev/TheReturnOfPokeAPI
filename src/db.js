@@ -3,20 +3,12 @@ const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
 const { DB_USER, DB_PASSWORD, DB_HOST } = process.env;
-const {
-  PGUSER,
-  PGPASSWORD,
-  PGHOST,
-  PGDATABASE,
-  PGPORT,
-  PGADDRESS,
-  DATABASE_URL,
-} = process.env;
+const { PGUSER, PGPASSWORD, PGHOST, PGDATABASE, PGPORT, DATABASE_URL } =
+  process.env;
 
 let sequelize =
   process.env.NODE_ENV === "production"
     ? new Sequelize({
-        address: PGADDRESS,
         database: PGDATABASE,
         dialect: "postgres",
         host: PGHOST,
