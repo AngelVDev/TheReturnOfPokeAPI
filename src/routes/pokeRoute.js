@@ -4,20 +4,22 @@ const { Pokemon, Type } = require("../db");
 const router = Router();
 
 router.get("/pokemons", async (req, res) => {
+  const { name } = req.query;
+  const info = await allInfo();
   try {
-    const { name } = req.query;
-    const info = await allInfo();
     if (name) {
-      const pokeName = info.filter((el) =>
+      const pokeName = await info.filter((el) =>
         el.name.toLowerCase().includes(name.toLowerCase())
       );
-      return res.status(200).json(pokeName);
+      pokeName.length
+        ? res.status(200).send(pokeName)
+        : res.status(404).send("POKE NOT FOUND");
     } else {
-      return res.status(200).json(info);
+      res.status(200).json(info);
     }
   } catch (error) {
     res.status(500).send(error);
-    console.log(error);
+    console.log("ERROR IN QUERY", error);
   }
 });
 router.get("/pokemons/:id", async (req, res) => {
