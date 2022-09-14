@@ -2,11 +2,13 @@ require("dotenv").config();
 const { Sequelize } = require("sequelize");
 const fs = require("fs");
 const path = require("path");
-const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, PORT } = process.env;
+const { DB_USER, DB_PASSWORD, DB_HOST, DB_NAME, PORT, DB_ADDRESS } =
+  process.env;
 
 let sequelize =
   process.env.NODE_ENV === "production"
     ? new Sequelize({
+        address: DB_ADDRESS,
         database: DB_NAME,
         dialect: "postgres",
         host: DB_HOST,
