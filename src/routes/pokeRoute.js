@@ -1,18 +1,48 @@
+const { default: axios } = require("axios");
 const { Router } = require("express");
-const { allInfo } = require("../controllers/pokeController.js");
+const { allInfo, pokeDB } = require("../controllers/pokeController.js");
 const { Pokemon, Type } = require("../db");
 const router = Router();
+
+function capitalize(name) {
+  return name.charAt(0).toUpperCase() + name.slice(1);
+}
 
 router.get("/pokemons", async (req, res) => {
   const { name } = req.query;
   const info = await allInfo();
   try {
     if (name) {
-      const pokeName = await info.filter((el) =>
-        el.name.toLowerCase().includes(name.toLowerCase())
+      const pokeName = await axios.get(
+        `https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`
       );
-      pokeName.length
-        ? res.status(200).send(pokeName)
+      const pokeInDB = await Pokemon.findAll({
+        where: { name },
+        include: Type,
+        through: { attributes: [] },
+      });
+      const pokeUnified = [pokeName.data].concat(pokeInDB);
+      const pokeMapped = pokeUnified.map((poke) => {
+        return {
+          id: poke.id,
+          name: capitalize(poke.name),
+          types: poke.types
+            .map((t) => {
+              return { name: t.type.name };
+            })
+            .filter(Boolean),
+          image: poke.sprites.other["official-artwork"].front_default,
+          HP: poke.stats[0].base_stat,
+          attack: poke.stats[1].base_stat,
+          defense: poke.stats[2].base_stat,
+          speed: poke.stats[5].base_stat,
+          weight: poke.weight,
+          height: poke.height,
+        };
+      });
+
+      pokeMapped.length
+        ? res.status(200).send(pokeMapped)
         : res.status(404).send("POKE NOT FOUND");
     } else {
       res.status(200).json(info);
