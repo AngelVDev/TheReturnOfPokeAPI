@@ -13,40 +13,35 @@ function byId(a, b) {
 }
 const fetchingData = async () => {
   const pokeData = [];
-  const pokeEndpoint = await axios.get(`https://pokeapi.co/api/v2/pokemon`);
-  const fetchPokeUrlFromEndpoint = await pokeEndpoint.data;
-  const fetchPokeUrlFromEndpoint2 = await axios.get(
-    `${fetchPokeUrlFromEndpoint.next}`
+  const pokeEndpoint = await axios.get(
+    "https://pokeapi.co/api/v2/pokemon?limit=151"
   );
-  const pokesUrl = await fetchPokeUrlFromEndpoint.results.map((el) => el.url);
-  const pokesUrl2 = await fetchPokeUrlFromEndpoint2.data.results.map(
-    (el) => el.url
-  );
-  for (let i = 0; i < 20; i++) {
-    pokeData.push(axios.get(pokesUrl[i]), axios.get(pokesUrl2[i]));
+  const results = pokeEndpoint.data.results;
+
+  for (let i = 0; i < results.length; i++) {
+    let secondaryGet = await axios.get(results[i].url);
+    let poke = await secondaryGet.data;
+    pokeData.push(await poke);
   }
-  const allPk = Promise.all(pokeData).then((pk) => {
-    let pokeArray = pk.map((poke) => {
-      return {
-        id: poke.data.id,
-        name: capitalize(poke.data.name),
-        types: poke.data.types
-          .map((t) => {
-            return { name: t.type.name };
-          })
-          .filter(Boolean),
-        image: poke.data.sprites.other["official-artwork"].front_default,
-        HP: poke.data.stats[0].base_stat,
-        attack: poke.data.stats[1].base_stat,
-        defense: poke.data.stats[2].base_stat,
-        speed: poke.data.stats[5].base_stat,
-        weight: poke.data.weight,
-        height: poke.data.height,
-      };
-    });
-    return pokeArray;
-  });
-  return await allPk;
+
+  const pokeMap = pokeData.map((poke) => ({
+    id: poke.id,
+    name: capitalize(poke.name),
+    types: poke.types
+      .map((t) => {
+        return { name: t.type.name };
+      })
+      .filter(Boolean),
+    image: poke.sprites.other["official-artwork"].front_default,
+    HP: poke.stats[0].base_stat,
+    attack: poke.stats[1].base_stat,
+    defense: poke.stats[2].base_stat,
+    speed: poke.stats[5].base_stat,
+    weight: poke.weight,
+    height: poke.height,
+  }));
+
+  return pokeMap;
 };
 
 module.exports = { fetchingData, byId };

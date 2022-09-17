@@ -9,7 +9,7 @@ const cache = apicache.middleware;
 
 // Configurar los routers
 // Ejemplo: router.use('/auth', authRouter);
-router.use("/", cache("5 minutes"), pkRoute);
+router.use("/", cache("10 minutes"), pkRoute);
 router.use("/", pkTypeRoute);
 
 module.exports = router;
