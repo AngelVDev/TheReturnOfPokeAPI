@@ -3,7 +3,9 @@ const { fetchingData, byId } = require("./service");
 
 const pokeApi = async () => {
   try {
-    return await fetchingData();
+    const info = await fetchingData();
+    const structuredCopy = info.slice();
+    return structuredCopy;
   } catch (err) {
     console.log(err);
   }
